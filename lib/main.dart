@@ -100,19 +100,19 @@ class PatternScreen extends StatelessWidget {
     "rain",
     "snow",
     "ambiance",
-    "fadeout"
+    "fadeout",
+    "clear"
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Regular Patterns'),
-        ),
-        body:
-          const Center(
-            child: PatternList(patterns: patterns),
-          ),
+      appBar: AppBar(
+        title: const Text('Regular Patterns'),
+      ),
+      body: const Center(
+        child: PatternList(patterns: patterns),
+      ),
     );
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-Future sendPackets(String effect, Color pickedColor) async {
-  print(pickedColor);
+Future sendPackets(String effect, Color pickedColor, int speed) async {
   final response = await http.post(
     Uri.http('192.168.0.151:8082', '/'),
     headers: <String, String>{
@@ -15,7 +15,8 @@ Future sendPackets(String effect, Color pickedColor) async {
       'effect': effect,
       'red': pickedColor.red,
       'green': pickedColor.green,
-      'blue': pickedColor.blue
+      'blue': pickedColor.blue,
+      'speed': speed
     }),
   );
 }
@@ -31,6 +32,14 @@ class PatternList extends StatefulWidget {
 class _PatternListState extends State<PatternList> {
   late List<String> leftPatterns;
   late List<String> rightPatterns;
+  final myController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -43,59 +52,57 @@ class _PatternListState extends State<PatternList> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Column(children: [
-        SizedBox(
-      height: 300,
-      child:
-      Row(
-        children: <Widget>[
-          Expanded(
-              flex: 1,
-              child: Column(children: [
-                Expanded(
-                    child: ListView.builder(
-                        itemCount: leftPatterns.length,
-                        itemBuilder: (context, index) {
-                          return Column(children: [
-                            const SizedBox(height: 10),
-                            SizedBox(
-                                height: 50,
-                                width: 100,
-                                child: ElevatedButton(
-                                    child: Text(leftPatterns[index]),
-                                    onPressed: () {
-                                      setState(() {
-                                        sendPackets(
-                                            leftPatterns[index], pickedColor);
-                                      });
-                                    })),
-                          ]);
-                        }))
-              ])),
-          Expanded(
-              child: ListView.builder(
-                  itemCount: rightPatterns.length,
-                  itemBuilder: (context, index) {
-                    return Column(children: [
-                      const SizedBox(height: 10),
-                      SizedBox(
-                          height: 50,
-                          width: 100,
-                          child: ElevatedButton(
-                              child: Text(rightPatterns[index]),
-                              onPressed: () {
-                                setState(() {
-                                  sendPackets(
-                                      rightPatterns[index], pickedColor);
-                                });
-                              })),
-                    ]);
-                  })),
-        ],
-      )),
+    return Column(children: [
       SizedBox(
-        height: 300,
+          height: 300,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: Column(children: [
+                    Expanded(
+                        child: ListView.builder(
+                            itemCount: leftPatterns.length,
+                            itemBuilder: (context, index) {
+                              return Column(children: [
+                                const SizedBox(height: 10),
+                                SizedBox(
+                                    height: 50,
+                                    width: 100,
+                                    child: ElevatedButton(
+                                        child: Text(leftPatterns[index]),
+                                        onPressed: () {
+                                          setState(() {
+                                            sendPackets(leftPatterns[index],
+                                                pickedColor, int.parse(myController.text));
+                                          });
+                                        })),
+                              ]);
+                            }))
+                  ])),
+              Expanded(
+                  child: ListView.builder(
+                      itemCount: rightPatterns.length,
+                      itemBuilder: (context, index) {
+                        return Column(children: [
+                          const SizedBox(height: 10),
+                          SizedBox(
+                              height: 50,
+                              width: 100,
+                              child: ElevatedButton(
+                                  child: Text(rightPatterns[index]),
+                                  onPressed: () {
+                                    setState(() {
+                                      sendPackets(rightPatterns[index],
+                                          pickedColor, int.parse(myController.text));
+                                    });
+                                  })),
+                        ]);
+                      })),
+            ],
+          )),
+      SizedBox(
+        height: 100,
         child: ListView(
           children: [
             const SizedBox(height: 20),
@@ -149,6 +156,18 @@ class _PatternListState extends State<PatternList> {
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+      SizedBox(
+        height: 100,
+        child: TextField(
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(labelText: "Enter the delay", labelStyle: TextStyle(color: Colors.white)),
+          controller: myController,
+          keyboardType: TextInputType.number,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly
           ],
         ),
       )
