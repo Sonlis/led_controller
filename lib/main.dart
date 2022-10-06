@@ -102,6 +102,7 @@ class PatternScreen extends StatelessWidget {
     "ambiance",
     "fadeout",
     "single_color_wipe",
+    "scanner",
     "clear"
   ];
 
