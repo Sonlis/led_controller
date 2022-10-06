@@ -1,16 +1,24 @@
 # led_controller
 
-A new Flutter project.
+Control the led strips through [the internal-gateway](https://github.com/Sonlis/internal-gateway)
 
-## Getting Started
+Simple application that sends a json payload to an hard-coded IP address, which has to match the 
+internal-gateway's server.
 
-This project is a starting point for a Flutter application.
+## Payload 
 
-A few resources to get you started if this is your first Flutter project:
+The payload is as such:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```json
+{
+  "effect": "effect",
+  "red": 100,
+  "green": 100,
+  "blue": 100,
+  "speed": 20
+}
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Effect must match the name of configured effects in [here](https://github.com/Sonlis/internal-gateway/blob/main/python/effects.py)
+red, green and blue are string representing the RGB starting point of the pattern. Speed is the delay
+in millisecond between each iteration of the pattern.
